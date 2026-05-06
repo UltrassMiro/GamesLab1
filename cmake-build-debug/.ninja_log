@@ -1,0 +1,11 @@
+# ninja log v5
+10	1024	7997807482520602	CMakeFiles/GamesLab1.dir/system/GameManager.cpp.obj	d970fd588c3063d2
+9	1246	7997837737592860	CMakeFiles/GamesLab1.dir/core/Game.cpp.obj	2911930bcfb9339f
+5	891	7997820889206187	CMakeFiles/GamesLab1.dir/auth/Auth.cpp.obj	d25e81ce1cea49f8
+2	176	7997854563205251	build.ninja	512a31e4de3ece18
+5	711	7997834787446139	CMakeFiles/GamesLab1.dir/manager/GameManager.cpp.obj	f9cfe7990a77f54d
+5	936	7997837734427964	CMakeFiles/GamesLab1.dir/main.cpp.obj	46a0ce2fb08a71fb
+902	1056	7997839916513632	GamesLab1.exe	77d1422502102891
+12	762	7997819013462303	CMakeFiles/GamesLab1.dir/Interface/Interface.cpp.obj	ad3b9906ea6db2
+5	733	7997827827935643	CMakeFiles/GamesLab1.dir/ui/Interface.cpp.obj	35e539b162ef3009
+5	901	7997839914990960	CMakeFiles/GamesLab1.dir/interface/Interface.cpp.obj	f4bcb85b479ada2
