@@ -1,11 +1,16 @@
 #include "Interface.h"
+
 #include "../user/User.h"
+
 #include "../devices/PC.h"
 #include "../devices/Mobile.h"
+
 #include "../games/RPG.h"
 #include "../games/Strategy.h"
 #include "../games/Adventure.h"
+
 #include "../manager/GameManager.h"
+
 #include <iostream>
 
 using namespace std;
@@ -131,7 +136,7 @@ void Interface::handleRun() {
         cout << "Game is running\n";
 
     else
-        cout << "Error: cannot boot the game\n";
+        cout << "Error: Cannot boot the game\n";
 }
 
 void Interface::handleSave() {
@@ -171,6 +176,8 @@ void Interface::handleStop() {
         return;
 
     game->stop();
+
+    manager->clear();
 
     cout << "Game stopped\n";
 }
@@ -227,7 +234,11 @@ void Interface::selectMobile() {
 
 void Interface::selectAdventure() {
 
+    if (!checkStoppedGame())
+        return;
+
     manager->clear();
+
     delete game;
 
     game = new Adventure("Adventure",4,16,4,70);
@@ -237,7 +248,11 @@ void Interface::selectAdventure() {
 
 void Interface::selectRPG() {
 
+    if (!checkStoppedGame())
+        return;
+
     manager->clear();
+
     delete game;
 
     RPG* rpg = new RPG("RPG",4,16,4,30);
@@ -263,10 +278,14 @@ void Interface::selectRPG() {
 
 void Interface::selectStrategy() {
 
+    if (!checkStoppedGame())
+        return;
+
     if (!checkStrategyPlatform())
         return;
 
     manager->clear();
+
     delete game;
 
     game = new Strategy("Strategy",4,8,4,20);
