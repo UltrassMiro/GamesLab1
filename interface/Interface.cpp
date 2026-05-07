@@ -221,6 +221,11 @@ void Interface::run() {
 
         else if (choice == '2') {
 
+            if (game && game->isRunning()) {
+                cout << "Error: stop current game first\n";
+                continue;
+            }
+
             int cpu, ram, gpu, storage;
 
             cout << "Enter CPU RAM GPU STORAGE:\n";
@@ -235,6 +240,11 @@ void Interface::run() {
         }
 
         else if (choice == '3') {
+
+            if (game && game->isRunning()) {
+                cout << "Error: stop current game first\n";
+                continue;
+            }
 
             int cpu, ram, gpu, storage;
 
@@ -251,6 +261,21 @@ void Interface::run() {
 
         else if (choice == '4') {
 
+            if (!user->isLogged()) {
+                cout << "Error: user is not logged in\n";
+                continue;
+            }
+
+            if (!device) {
+                cout << "Error: device not selected\n";
+                continue;
+            }
+
+            if (game && game->isRunning()) {
+                cout << "Error: stop current game first\n";
+                continue;
+            }
+
             delete game;
 
             game = new Adventure(
@@ -261,6 +286,21 @@ void Interface::run() {
         }
 
         else if (choice == '5') {
+
+            if (!user->isLogged()) {
+                cout << "Error: user is not logged in\n";
+                continue;
+            }
+
+            if (!device) {
+                cout << "Error: device not selected\n";
+                continue;
+            }
+
+            if (game && game->isRunning()) {
+                cout << "Error: stop current game first\n";
+                continue;
+            }
 
             delete game;
 
@@ -289,8 +329,18 @@ void Interface::run() {
 
         else if (choice == '6') {
 
+            if (!user->isLogged()) {
+                cout << "Error: user is not logged in\n";
+                continue;
+            }
+
             if (!device) {
                 cout << "Error: device not selected\n";
+                continue;
+            }
+
+            if (game && game->isRunning()) {
+                cout << "Error: stop current game first\n";
                 continue;
             }
 
