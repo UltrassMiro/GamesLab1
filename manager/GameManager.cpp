@@ -11,4 +11,9 @@ bool GameManager::start(IGame& g, IUser& u, IDevice& d) {
         current = &g;
 
     return result == GameStatus::OK;
+
+}
+
+void GameManager::clear() {
+    current = nullptr;
 }

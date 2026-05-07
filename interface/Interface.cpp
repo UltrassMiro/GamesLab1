@@ -1,44 +1,109 @@
 #include "Interface.h"
-
 #include "../user/User.h"
-
 #include "../devices/PC.h"
 #include "../devices/Mobile.h"
-
 #include "../games/RPG.h"
 #include "../games/Strategy.h"
 #include "../games/Adventure.h"
-
+#include "../manager/GameManager.h"
 #include <iostream>
 
 using namespace std;
 
 Interface::Interface() {
+
     user = new User();
+
+    device = nullptr;
+    game = nullptr;
+
+    manager = new GameManager();
 }
 
 Interface::~Interface() {
+
     delete user;
     delete device;
     delete game;
+    delete manager;
+}
+
+bool Interface::checkUser() {
+
+    if (!user || !user->isLogged()) {
+
+        cout << "Error: user is not logged in\n";
+        return false;
+    }
+
+    return true;
+}
+
+bool Interface::checkDevice() {
+
+    if (!device) {
+
+        cout << "Error: device not selected\n";
+        return false;
+    }
+
+    return true;
+}
+
+bool Interface::checkGame() {
+
+    if (!game) {
+
+        cout << "Error: game not selected\n";
+        return false;
+    }
+
+    return true;
+}
+
+bool Interface::checkRunningGame() {
+
+    if (!checkGame())
+        return false;
+
+    if (!game->isRunning()) {
+
+        cout << "Error: game is not running\n";
+        return false;
+    }
+
+    return true;
+}
+
+bool Interface::checkStoppedGame() {
+
+    if (!game)
+        return true;
+
+    if (game->isRunning()) {
+
+        cout << "Error: stop current game first\n";
+        return false;
+    }
+
+    return true;
+}
+
+bool Interface::checkStrategyPlatform() {
+
+    if (!device || !device->isPC()) {
+
+        cout << "Error: Strategy supports only PC\n";
+        return false;
+    }
+
+    return true;
 }
 
 void Interface::handleInstall() {
 
-    if (!user->isLogged()) {
-        cout << "Error: user is not logged in\n";
+    if (!checkUser() || !checkDevice() || !checkGame())
         return;
-    }
-
-    if (!device) {
-        cout << "Error: device not selected\n";
-        return;
-    }
-
-    if (!game) {
-        cout << "Error: game not selected\n";
-        return;
-    }
 
     GameStatus result = game->install(*device);
 
@@ -51,46 +116,28 @@ void Interface::handleInstall() {
 
 void Interface::handleRun() {
 
-    if (!user->isLogged()) {
-        cout << "Error: user is not logged in\n";
+    if (!checkUser() || !checkDevice() || !checkGame())
+        return;
+
+    if (game->isRunning()) {
+
+        cout << "Error: game already running\n";
         return;
     }
 
-    if (!device) {
-        cout << "Error: device not selected\n";
-        return;
-    }
-
-    if (!game) {
-        cout << "Error: game not selected\n";
-        return;
-    }
-
-    bool result = manager.start(*game, *user, *device);
+    bool result = manager->start(*game, *user, *device);
 
     if (result)
-        cout << "Game started\n";
+        cout << "Game is running\n";
 
     else
-        cout << "Error: cannot start game\n";
+        cout << "Error: cannot boot the game\n";
 }
 
 void Interface::handleSave() {
 
-    if (!user->isLogged()) {
-        cout << "Error: user is not logged in\n";
+    if (!checkUser() || !checkRunningGame())
         return;
-    }
-
-    if (!device) {
-        cout << "Error: device not selected\n";
-        return;
-    }
-
-    if (!game) {
-        cout << "Error: game not selected\n";
-        return;
-    }
 
     GameStatus result = game->save();
 
@@ -98,25 +145,13 @@ void Interface::handleSave() {
         cout << "Game saved\n";
 
     else
-        cout << "Error: game is not running\n";
+        cout << "Error: save failed\n";
 }
 
 void Interface::handleLoad() {
 
-    if (!user->isLogged()) {
-        cout << "Error: user is not logged in\n";
+    if (!checkUser() || !checkGame())
         return;
-    }
-
-    if (!device) {
-        cout << "Error: device not selected\n";
-        return;
-    }
-
-    if (!game) {
-        cout << "Error: game not selected\n";
-        return;
-    }
 
     GameStatus result = game->load();
 
@@ -127,25 +162,13 @@ void Interface::handleLoad() {
         cout << "Error: no saves found\n";
 
     else
-        cout << "Error: game is not running\n";
+        cout << "Error: cannot load game\n";
 }
 
 void Interface::handleStop() {
 
-    if (!user->isLogged()) {
-        cout << "Error: user is not logged in\n";
+    if (!checkRunningGame())
         return;
-    }
-
-    if (!game) {
-        cout << "Error: game not selected\n";
-        return;
-    }
-
-    if (!game->isRunning()) {
-        cout << "Error: game is not running\n";
-        return;
-    }
 
     game->stop();
 
@@ -154,32 +177,101 @@ void Interface::handleStop() {
 
 void Interface::handleStream() {
 
-    if (!user->isLogged()) {
-        cout << "Error: user is not logged in\n";
+    if (!checkUser() || !checkDevice() || !checkRunningGame())
         return;
-    }
-
-    if (!device) {
-        cout << "Error: device not selected\n";
-        return;
-    }
 
     if (!device->canStream()) {
+
         cout << "Error: streaming supported only on mobile\n";
         return;
     }
 
-    if (!game) {
-        cout << "Error: game not selected\n";
-        return;
-    }
-
-    if (!game->isRunning()) {
-        cout << "Error: game is not running\n";
-        return;
-    }
-
     cout << "Streaming started\n";
+}
+
+void Interface::selectPC() {
+
+    if (!checkStoppedGame())
+        return;
+
+    int cpu, ram, gpu, storage;
+
+    cout << "Enter CPU RAM GPU STORAGE:\n";
+
+    cin >> cpu >> ram >> gpu >> storage;
+
+    delete device;
+
+    device = new PC(cpu, ram, gpu, storage);
+
+    cout << "PC selected\n";
+}
+
+void Interface::selectMobile() {
+
+    if (!checkStoppedGame())
+        return;
+
+    int cpu, ram, gpu, storage;
+
+    cout << "Enter CPU RAM GPU STORAGE:\n";
+
+    cin >> cpu >> ram >> gpu >> storage;
+
+    delete device;
+
+    device = new Mobile(cpu, ram, gpu, storage);
+
+    cout << "Mobile selected\n";
+}
+
+void Interface::selectAdventure() {
+
+    manager->clear();
+    delete game;
+
+    game = new Adventure("Adventure",4,8,4,20);
+
+    cout << "Adventure selected\n";
+}
+
+void Interface::selectRPG() {
+
+    manager->clear();
+    delete game;
+
+    RPG* rpg = new RPG("RPG",4,8,4,20);
+
+    int controllers;
+
+    cout << "Enter controllers count:\n";
+
+    cin >> controllers;
+
+    rpg->setControllers(controllers);
+
+    if (rpg->canMultiplayer())
+        cout << "Multiplayer available\n";
+
+    else
+        cout << "Multiplayer unavailable\n";
+
+    game = rpg;
+
+    cout << "RPG selected\n";
+}
+
+void Interface::selectStrategy() {
+
+    if (!checkStrategyPlatform())
+        return;
+
+    manager->clear();
+    delete game;
+
+    game = new Strategy("Strategy",4,8,4,20);
+
+    cout << "Strategy selected\n";
 }
 
 void Interface::run() {
@@ -203,7 +295,7 @@ void Interface::run() {
         cout << "9 - Save Game\n";
 
         cout << "q - Load Game\n";
-        cout << "w - Stop Game\n";
+        cout << "s - Stop Game\n";
         cout << "e - Stream\n";
 
         cout << "0 - Exit\n";
@@ -219,168 +311,41 @@ void Interface::run() {
             cout << "User logged in\n";
         }
 
-        else if (choice == '2') {
+        else if (choice == '2')
+            selectPC();
 
-            if (game && game->isRunning()) {
-                cout << "Error: stop current game first\n";
-                continue;
-            }
+        else if (choice == '3')
+            selectMobile();
 
-            int cpu, ram, gpu, storage;
+        else if (choice == '4')
+            selectAdventure();
 
-            cout << "Enter CPU RAM GPU STORAGE:\n";
+        else if (choice == '5')
+            selectRPG();
 
-            cin >> cpu >> ram >> gpu >> storage;
+        else if (choice == '6')
+            selectStrategy();
 
-            delete device;
-
-            device = new PC(cpu, ram, gpu, storage);
-
-            cout << "PC selected\n";
-        }
-
-        else if (choice == '3') {
-
-            if (game && game->isRunning()) {
-                cout << "Error: stop current game first\n";
-                continue;
-            }
-
-            int cpu, ram, gpu, storage;
-
-            cout << "Enter CPU RAM GPU STORAGE:\n";
-
-            cin >> cpu >> ram >> gpu >> storage;
-
-            delete device;
-
-            device = new Mobile(cpu, ram, gpu, storage);
-
-            cout << "Mobile selected\n";
-        }
-
-        else if (choice == '4') {
-
-            if (!user->isLogged()) {
-                cout << "Error: user is not logged in\n";
-                continue;
-            }
-
-            if (!device) {
-                cout << "Error: device not selected\n";
-                continue;
-            }
-
-            if (game && game->isRunning()) {
-                cout << "Error: stop current game first\n";
-                continue;
-            }
-
-            delete game;
-
-            game = new Adventure(
-                    "Adventure",4,8,4,20
-            );
-
-            cout << "Adventure selected\n";
-        }
-
-        else if (choice == '5') {
-
-            if (!user->isLogged()) {
-                cout << "Error: user is not logged in\n";
-                continue;
-            }
-
-            if (!device) {
-                cout << "Error: device not selected\n";
-                continue;
-            }
-
-            if (game && game->isRunning()) {
-                cout << "Error: stop current game first\n";
-                continue;
-            }
-
-            delete game;
-
-            RPG* rpg = new RPG(
-                    "RPG",4,8,4,20
-            );
-
-            int controllers;
-
-            cout << "Enter controllers count:\n";
-
-            cin >> controllers;
-
-            rpg->setControllers(controllers);
-
-            if (rpg->canMultiplayer())
-                cout << "Multiplayer available\n";
-
-            else
-                cout << "Multiplayer unavailable\n";
-
-            game = rpg;
-
-            cout << "RPG selected\n";
-        }
-
-        else if (choice == '6') {
-
-            if (!user->isLogged()) {
-                cout << "Error: user is not logged in\n";
-                continue;
-            }
-
-            if (!device) {
-                cout << "Error: device not selected\n";
-                continue;
-            }
-
-            if (game && game->isRunning()) {
-                cout << "Error: stop current game first\n";
-                continue;
-            }
-
-            if (!device->isPC()) {
-                cout << "Error: Strategy supports only PC\n";
-                continue;
-            }
-
-            delete game;
-
-            game = new Strategy(
-                    "Strategy",4,8,4,20
-            );
-
-            cout << "Strategy selected\n";
-        }
-
-        else if (choice == '7') {
+        else if (choice == '7')
             handleInstall();
-        }
 
-        else if (choice == '8') {
+        else if (choice == '8')
             handleRun();
-        }
 
-        else if (choice == '9') {
+        else if (choice == '9')
             handleSave();
-        }
 
-        else if (choice == 'q') {
+        else if (choice == 'q')
             handleLoad();
-        }
 
-        else if (choice == 'w') {
+        else if (choice == 's')
             handleStop();
-        }
 
-        else if (choice == 'e') {
+        else if (choice == 'e')
             handleStream();
-        }
+
+        else if (choice != '0')
+            cout << "Invalid choice\n";
 
     } while (choice != '0');
 }

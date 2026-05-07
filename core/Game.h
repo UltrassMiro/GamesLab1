@@ -30,6 +30,9 @@ public:
     GameStatus save() override;
     GameStatus load() override;
 
+    bool isInstalled() const;
     bool isRunning() const override;
     string getName() const override;
+
+
 };

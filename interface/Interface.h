@@ -1,16 +1,25 @@
 #pragma once
-#include "../user/IUser.h"
-#include "../devices/IDevice.h"
-#include "../core/IGame.h"
-#include "../manager/GameManager.h"
+
+class User;
+class Device;
+class Game;
 
 class Interface {
-private:
-    IUser* user = nullptr;
-    IDevice* device = nullptr;
-    IGame* game = nullptr;
 
-    GameManager manager;
+private:
+
+    User* user = nullptr;
+    Device* device = nullptr;
+    Game* game = nullptr;
+
+    class GameManager* manager = nullptr;
+
+    bool checkUser();
+    bool checkDevice();
+    bool checkGame();
+    bool checkRunningGame();
+    bool checkStoppedGame();
+    bool checkStrategyPlatform();
 
     void handleInstall();
     void handleRun();
@@ -19,7 +28,14 @@ private:
     void handleStop();
     void handleStream();
 
+    void selectPC();
+    void selectMobile();
+    void selectAdventure();
+    void selectRPG();
+    void selectStrategy();
+
 public:
+
     Interface();
     ~Interface();
 

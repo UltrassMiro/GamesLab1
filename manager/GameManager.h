@@ -9,4 +9,5 @@ class GameManager {
 
 public:
     bool start(IGame&, IUser&, IDevice&);
+    void clear();
 };

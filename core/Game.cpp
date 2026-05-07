@@ -15,6 +15,10 @@ GameStatus Game::install(IDevice& d) {
     return GameStatus::OK;
 }
 
+bool Game::isInstalled() const {
+    return installed;
+}
+
 GameStatus Game::run(IUser& u, IDevice& d) {
     if (!installed)
         return GameStatus::NOT_INSTALLED;
