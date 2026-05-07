@@ -32,7 +32,7 @@ bool Interface::checkUser() {
 
     if (!user || !user->isLogged()) {
 
-        cout << "Error: user is not logged in\n";
+        cout << "Error: User is not logged in\n";
         return false;
     }
 
@@ -43,7 +43,7 @@ bool Interface::checkDevice() {
 
     if (!device) {
 
-        cout << "Error: device not selected\n";
+        cout << "Error: Device not selected\n";
         return false;
     }
 
@@ -54,7 +54,7 @@ bool Interface::checkGame() {
 
     if (!game) {
 
-        cout << "Error: game not selected\n";
+        cout << "Error: Game not selected\n";
         return false;
     }
 
@@ -68,7 +68,7 @@ bool Interface::checkRunningGame() {
 
     if (!game->isRunning()) {
 
-        cout << "Error: game is not running\n";
+        cout << "Error: Game is not running\n";
         return false;
     }
 
@@ -82,7 +82,7 @@ bool Interface::checkStoppedGame() {
 
     if (game->isRunning()) {
 
-        cout << "Error: stop current game first\n";
+        cout << "Error: Stop current game first\n";
         return false;
     }
 
@@ -111,7 +111,7 @@ void Interface::handleInstall() {
         cout << "Game installed\n";
 
     else
-        cout << "Error: not enough storage\n";
+        cout << "Error: Weak hardware\n";
 }
 
 void Interface::handleRun() {
@@ -121,7 +121,7 @@ void Interface::handleRun() {
 
     if (game->isRunning()) {
 
-        cout << "Error: game already running\n";
+        cout << "Error: Game already running\n";
         return;
     }
 
@@ -145,7 +145,7 @@ void Interface::handleSave() {
         cout << "Game saved\n";
 
     else
-        cout << "Error: save failed\n";
+        cout << "Error: Save failed\n";
 }
 
 void Interface::handleLoad() {
@@ -159,10 +159,10 @@ void Interface::handleLoad() {
         cout << "Game loaded\n";
 
     else if (result == GameStatus::NO_SAVES)
-        cout << "Error: no saves found\n";
+        cout << "Error: No saves found\n";
 
     else
-        cout << "Error: cannot load game\n";
+        cout << "Error: Cannot load game\n";
 }
 
 void Interface::handleStop() {
@@ -182,7 +182,7 @@ void Interface::handleStream() {
 
     if (!device->canStream()) {
 
-        cout << "Error: streaming supported only on mobile\n";
+        cout << "Error: Streaming supported only on mobile\n";
         return;
     }
 
