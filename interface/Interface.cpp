@@ -230,7 +230,7 @@ void Interface::selectAdventure() {
     manager->clear();
     delete game;
 
-    game = new Adventure("Adventure",4,8,4,20);
+    game = new Adventure("Adventure",4,16,4,70);
 
     cout << "Adventure selected\n";
 }
@@ -240,7 +240,7 @@ void Interface::selectRPG() {
     manager->clear();
     delete game;
 
-    RPG* rpg = new RPG("RPG",4,8,4,20);
+    RPG* rpg = new RPG("RPG",4,16,4,30);
 
     int controllers;
 
