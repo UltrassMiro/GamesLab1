@@ -5,13 +5,10 @@ class Device;
 class Game;
 
 class Interface {
-
 private:
-
     User* user = nullptr;
     Device* device = nullptr;
     Game* game = nullptr;
-
     class GameManager* manager = nullptr;
 
     bool checkUser();
@@ -34,10 +31,17 @@ private:
     void selectRPG();
     void selectStrategy();
 
-public:
+    void showMainMenu();
+    void showDeviceMenu();
+    void showGameMenu();
+    void showActionMenu();
 
+    void handleDeviceMenu();
+    void handleGameMenu();
+    void handleActionMenu();
+
+public:
     Interface();
     ~Interface();
-
     void run();
 };

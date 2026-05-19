@@ -6,6 +6,9 @@ Game::Game(string n, int c, int r, int g, int s)
         : name(n), cpu(c), ram(r), gpu(g), storage(s) {}
 
 GameStatus Game::install(IDevice& d) {
+    if (installed)
+        return GameStatus::ALREADY_INSTALLED;
+
     if (d.getStorage() < storage)
         return GameStatus::WEAK_HARDWARE;
 
