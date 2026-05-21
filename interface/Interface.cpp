@@ -6,7 +6,7 @@
 #include "../games/Strategy.h"
 #include "../manager/GameManager.h"
 #include "../user/User.h"
-
+#include "../observers/AchievementObserver.h"
 #include <iostream>
 
 using namespace std;
@@ -16,6 +16,7 @@ Interface::Interface() {
     device = nullptr;
     game = nullptr;
     manager = new GameManager();
+    achievementObserver = new AchievementObserver();
 }
 
 Interface::~Interface() {
@@ -23,6 +24,7 @@ Interface::~Interface() {
     delete device;
     delete game;
     delete manager;
+    delete achievementObserver;
 }
 
 void Interface::handleActionMenu() {
@@ -62,37 +64,125 @@ void Interface::handleActionMenu() {
 }
 
 void Interface::selectPC() {
-    delete device;
-    device = new PC(8, 16, 6, 500);
+    if (pcConfigured) {
+        cout << "Windows PC is already configured.\n";
+        cout << "Current PC hardware:\n";
+        cout << "CPU=" << pcCpu
+             << ", RAM=" << pcRam
+             << ", GPU=" << pcGpu
+             << ", Storage=" << pcStorage
+             << endl;
 
-    cout << "Windows PC selected.\n";
+        delete device;
+        device = new PC(pcCpu, pcRam, pcGpu, pcStorage);
+
+        cout << "Windows PC selected again with existing hardware.\n";
+        return;
+    }
+
+    cout << "Enter PC CPU level: ";
+    cin >> pcCpu;
+
+    cout << "Enter PC RAM amount: ";
+    cin >> pcRam;
+
+    cout << "Enter PC GPU level: ";
+    cin >> pcGpu;
+
+    cout << "Enter PC Storage amount: ";
+    cin >> pcStorage;
+
+    pcConfigured = true;
+
+    delete device;
+    device = new PC(pcCpu, pcRam, pcGpu, pcStorage);
+
+    cout << "PC selected with hardware:\n";
+    cout << "CPU=" << pcCpu
+         << ", RAM=" << pcRam
+         << ", GPU=" << pcGpu
+         << ", Storage=" << pcStorage
+         << endl;
 }
 
 void Interface::selectMobile() {
-    delete device;
-    device = new Mobile(4, 8, 3, 128);
+    if (mobileConfigured) {
+        cout << "Mobile device is already configured.\n";
+        cout << "Current mobile hardware:\n";
+        cout << "CPU=" << mobileCpu
+             << ", RAM=" << mobileRam
+             << ", GPU=" << mobileGpu
+             << ", Storage=" << mobileStorage
+             << endl;
 
-    cout << "Mobile device selected.\n";
+        delete device;
+        device = new Mobile(mobileCpu, mobileRam, mobileGpu, mobileStorage);
+
+        cout << "Mobile device selected again with existing hardware.\n";
+        return;
+    }
+
+    cout << "Enter Mobile CPU level: ";
+    cin >> mobileCpu;
+
+    cout << "Enter Mobile RAM amount: ";
+    cin >> mobileRam;
+
+    cout << "Enter Mobile GPU level: ";
+    cin >> mobileGpu;
+
+    cout << "Enter Mobile Storage amount: ";
+    cin >> mobileStorage;
+
+    mobileConfigured = true;
+
+    delete device;
+    device = new Mobile(mobileCpu, mobileRam, mobileGpu, mobileStorage);
+
+    cout << "Mobile selected with hardware:\n";
+    cout << "CPU=" << mobileCpu
+         << ", RAM=" << mobileRam
+         << ", GPU=" << mobileGpu
+         << ", Storage=" << mobileStorage
+         << endl;
 }
 
 void Interface::selectAdventure() {
     delete game;
     game = new Adventure("Adventure World", 2, 4, 2, 20);
 
+    game->addObserver(achievementObserver);
     cout << "Adventure game selected.\n";
 }
 
 void Interface::selectRPG() {
     delete game;
-    game = new RPG("Fantasy RPG", 4, 8, 4, 50);
+
+    RPG* rpg = new RPG(
+        "Fantasy RPG", 4, 8, 4, 50);
+
+    int controllers;
+    cout << "Enter number of connected controllers: ";
+    cin >> controllers;
+
+    rpg->setControllers(controllers);
+    game = rpg;
+    game->addObserver(achievementObserver);
 
     cout << "RPG game selected.\n";
+
+    if (rpg->canMultiplayer()) {
+        cout << "Multiplayer mode is available.\n";
+    } else {
+        cout << "Multiplayer mode is unavailable. At least 2 controllers are required.\n";
+    }
 }
 
 void Interface::selectStrategy() {
     delete game;
     game = new Strategy("War Strategy", 6, 12, 6, 70);
 
+    game->addObserver(achievementObserver);
     cout << "Strategy game selected.\n";
 }
 
@@ -332,7 +422,7 @@ void Interface::showActionMenu() {
     cout << "3 - Save game\n";
     cout << "4 - Load saved game\n";
     cout << "5 - Stop game\n";
-    cout << "6 - Stream from mobile device\n";
+    cout << "6 - Stream\n";
     cout << "0 - Back\n";
     cout << "Choice: ";
 }

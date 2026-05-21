@@ -3,6 +3,12 @@
 
 class PC : public Device {
 public:
-    PC(int c, int r, int g, int s) : Device(c, r, g, s) {}
-    bool isPC() const override { return true; }
+    PC(int cpu, int ram, int gpu, int storage)
+        : Device(cpu, ram, gpu, storage) {}
+
+    bool isPC() const override {return true;}
+
+    bool isMobile() const override {return false;}
+
+    bool canStream() const override {return false;}
 };

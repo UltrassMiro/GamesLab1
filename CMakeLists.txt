@@ -20,4 +20,11 @@ add_executable(GamesLab1 main.cpp
         core/IGame.h
         interface/Interface.h
         interface/Interface.cpp
-        core/GameStatus.h)
+        core/GameStatus.h
+        observers/GameEventArgs.h
+        observers/IGameObserver.h
+        compatibility/IPlatformCompatibilityStrategy.h
+        compatibility/AnyPlatformStrategy.h
+        compatibility/WindowsPcOnlyStrategy.h
+        observers/AchievementObserver.h
+)

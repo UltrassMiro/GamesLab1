@@ -1,38 +1,58 @@
 #pragma once
+
 #include "IGame.h"
+#include "GameStatus.h"
+#include <string>
 #include <vector>
-#include <functional>
+#include <memory>
+#include <algorithm>
+#include "../observers/IGameObserver.h"
+#include "../compatibility/IPlatformCompatibilityStrategy.h"
 
 using namespace std;
 
 class Game : public IGame {
 protected:
     string name;
-    int cpu, ram, gpu, storage;
+
+    int cpu;
+    int ram;
+    int gpu;
+    int storage;
 
     bool installed = false;
     bool running = false;
 
     vector<string> saves;
+    vector<IGameObserver*> observers;
+
+    unique_ptr<IPlatformCompatibilityStrategy> platformStrategy;
+
+    void notifyObservers(
+        const string& message,
+        GameStatus status
+    );
 
 public:
-    function<void(string)> onStart;
-    function<void(string)> onStop;
+    Game(
+        string n,
+        int c,
+        int r,
+        int g,
+        int s,
+        unique_ptr<IPlatformCompatibilityStrategy> strategy
+    );
 
-    Game(string n, int c, int r, int g, int s);
+    void addObserver(IGameObserver* observer);
+    void removeObserver(IGameObserver* observer);
 
-    virtual bool canRunOn(IDevice&) = 0;
-
-    GameStatus install(IDevice&) override;
-    GameStatus run(IUser&, IDevice&) override;
+    GameStatus install(IDevice& device) override;
+    GameStatus run(IUser& user, IDevice& device) override;
     void stop() override;
-
     GameStatus save() override;
     GameStatus load() override;
 
-    bool isInstalled() const;
+    bool isInstalled() const override;
     bool isRunning() const override;
     string getName() const override;
-
-
 };

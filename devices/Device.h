@@ -3,20 +3,34 @@
 
 class Device : public IDevice {
 protected:
-    int cpu, ram, gpu, storage;
+    int cpu;
+    int ram;
+    int gpu;
+    int storage;
 
 public:
-    Device(int c, int r, int g, int s)
-            : cpu(c), ram(r), gpu(g), storage(s) {}
+    Device(int cpu, int ram, int gpu, int storage)
+        : cpu(cpu), ram(ram), gpu(gpu), storage(storage) {}
 
-    bool canRun(int c, int r, int g) const override {
-        return cpu >= c && ram >= r && gpu >= g;
+    int getCpu() const override {return cpu;}
+
+    int getRam() const override {return ram;}
+
+    int getGpu() const override {return gpu;}
+
+    int getStorage() const override {return storage;}
+
+    bool canRun(int requiredCpu, int requiredRam, int requiredGpu) const override {
+        return cpu >= requiredCpu &&
+               ram >= requiredRam &&
+               gpu >= requiredGpu;
     }
 
-    int getStorage() const override { return storage; }
-    void useStorage(int s) override { storage -= s; }
+    bool hasEnoughStorage(int requiredStorage) const override {
+        return storage >= requiredStorage;
+    }
 
-    bool isPC() const override { return false; }
-    bool isMobile() const override { return false; }
-    bool canStream() const override { return false; }
+    void useStorage(int size) override {
+        storage -= size;
+    }
 };

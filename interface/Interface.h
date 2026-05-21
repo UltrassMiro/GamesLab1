@@ -3,12 +3,16 @@
 class User;
 class Device;
 class Game;
+class ConsoleGameObserver;
+class ConsoleGameObserver;
+class AchievementObserver;
 
 class Interface {
 private:
     User* user = nullptr;
     Device* device = nullptr;
     Game* game = nullptr;
+    AchievementObserver* achievementObserver = nullptr;
     class GameManager* manager = nullptr;
 
     bool checkUser();
@@ -39,6 +43,19 @@ private:
     void handleDeviceMenu();
     void handleGameMenu();
     void handleActionMenu();
+
+    bool pcConfigured = false;
+    bool mobileConfigured = false;
+
+    int pcCpu = 0;
+    int pcRam = 0;
+    int pcGpu = 0;
+    int pcStorage = 0;
+
+    int mobileCpu = 0;
+    int mobileRam = 0;
+    int mobileGpu = 0;
+    int mobileStorage = 0;
 
 public:
     Interface();
