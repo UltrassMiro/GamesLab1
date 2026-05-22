@@ -17,14 +17,23 @@ Interface::Interface() {
     device = nullptr;
     game = nullptr;
     manager = new GameManager();
+
     achievementObserver = new AchievementObserver();
+
+    adventureGame = nullptr;
+    rpgGame = nullptr;
+    strategyGame = nullptr;
 }
 
 Interface::~Interface() {
     delete user;
     delete device;
-    delete game;
     delete manager;
+
+    delete adventureGame;
+    delete rpgGame;
+    delete strategyGame;
+
     delete achievementObserver;
 }
 
@@ -149,42 +158,61 @@ void Interface::selectMobile() {
 }
 
 void Interface::selectAdventure() {
-    delete game;
-    game = new Adventure("Adventure World", 2, 4, 2, 20);
+    if (adventureGame == nullptr) {
+        adventureGame = new Adventure("Adventure World", 2, 4, 2, 20);
+        adventureGame->addObserver(achievementObserver);
+    }
 
-    game->addObserver(achievementObserver);
+    game = adventureGame;
+
     cout << "Adventure game selected.\n";
+
+    if (game->isInstalled()) {
+        cout << "This game is already installed.\n";
+    }
 }
 
 void Interface::selectRPG() {
-    delete game;
+    if (rpgGame == nullptr) {
+        rpgGame = new RPG("Fantasy RPG", 4, 8, 4, 50);
 
-    RPG* rpg = new RPG(
-        "Fantasy RPG", 4, 8, 4, 50);
+        int controllers;
+        cout << "Enter number of connected controllers: ";
+        cin >> controllers;
 
-    int controllers;
-    cout << "Enter number of connected controllers: ";
-    cin >> controllers;
+        rpgGame->setControllers(controllers);
+        rpgGame->addObserver(achievementObserver);
+    }
 
-    rpg->setControllers(controllers);
-    game = rpg;
-    game->addObserver(achievementObserver);
+    game = rpgGame;
 
     cout << "RPG game selected.\n";
 
-    if (rpg->canMultiplayer()) {
+    if (rpgGame->canMultiplayer()) {
         cout << "Multiplayer mode is available.\n";
     } else {
         cout << "Multiplayer mode is unavailable. At least 2 controllers are required.\n";
     }
+
+    if (game->isInstalled()) {
+        cout << "This game is already installed.\n";
+    }
 }
 
 void Interface::selectStrategy() {
-    delete game;
-    game = new Strategy("War Strategy", 6, 12, 6, 70);
+    if (strategyGame == nullptr) {
+        strategyGame = new Strategy("War Strategy", 6, 12, 6, 70);
+        strategyGame->addObserver(achievementObserver);
+    }
 
-    game->addObserver(achievementObserver);
+    game = strategyGame;
+
     cout << "Strategy game selected.\n";
+    cout << "Requirements: CPU=6, RAM=12, GPU=6, Storage=70\n";
+
+    if (game->isInstalled()) {
+        cout << "This game is already installed.\n";
+    }
 }
 
 void Interface::handleInstall() {
@@ -197,6 +225,22 @@ void Interface::handleInstall() {
 
 void Interface::handleRun() {
     if (!checkUser() || !checkDevice() || !checkGame()) {
+        return;
+    }
+
+    if (game->isRunning()) {
+        notifySystem(
+            "This game is already running. Stop it before starting again.",
+            GameStatus::NOT_RUNNING
+        );
+        return;
+    }
+
+    if (manager->hasActiveGame()) {
+        notifySystem(
+            "Another game is already running. Stop it first.",
+            GameStatus::NOT_RUNNING
+        );
         return;
     }
 

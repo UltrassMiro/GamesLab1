@@ -8,7 +8,9 @@ class User;
 class Device;
 class Game;
 class AchievementObserver;
-
+class Adventure;
+class RPG;
+class Strategy;
 
 class Interface {
 private:
@@ -64,6 +66,9 @@ private:
         const string& message,
         GameStatus status
     );
+    Adventure* adventureGame = nullptr;
+    RPG* rpgGame = nullptr;
+    Strategy* strategyGame = nullptr;
 public:
 
     Interface();

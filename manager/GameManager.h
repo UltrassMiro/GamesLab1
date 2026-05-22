@@ -2,16 +2,25 @@
 
 #include "../core/GameStatus.h"
 
-class IGame;
+class Game;
 class IUser;
 class IDevice;
 
 class GameManager {
+
 private:
-    IGame* current = nullptr;
+
+    Game* activeGame = nullptr;
 
 public:
-    GameStatus installGame(IGame& game, IDevice& device);
-    GameStatus start(IGame& game, IUser& user, IDevice& device);
+    GameStatus installGame(Game& game, IDevice& device);
+    bool hasActiveGame() const;
+
+    bool start(
+            Game& game,
+            IUser& user,
+            IDevice& device
+    );
+
     void clear();
 };
