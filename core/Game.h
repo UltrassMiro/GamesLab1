@@ -35,11 +35,11 @@ protected:
 
 public:
     Game(
-        string n,
-        int c,
-        int r,
-        int g,
-        int s,
+        string name,
+        int cpu,
+        int ram,
+        int gpu,
+        int storage,
         unique_ptr<IPlatformCompatibilityStrategy> strategy
     );
 

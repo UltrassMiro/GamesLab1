@@ -8,8 +8,8 @@ private:
     int controllers = 0;
 
 public:
-    RPG(string n, int c, int r, int g, int s)
-        : Game(n, c, r, g, s, make_unique<AnyPlatformStrategy>()) {}
+    RPG(string name, int cpu, int ram, int gpu, int storage)
+        : Game(name, cpu, ram, gpu, storage,make_unique<AnyPlatformStrategy>()) {}
 
     void setControllers(int c) {
         controllers = c;

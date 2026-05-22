@@ -5,6 +5,6 @@
 
 class Adventure : public Game {
 public:
-    Adventure(string n, int c, int r, int g, int s)
-        : Game(n, c, r, g, s, make_unique<AnyPlatformStrategy>()) {}
+    Adventure(string name, int cpu, int ram, int gpu, int storage)
+        : Game(name, cpu, ram, gpu, storage, make_unique<AnyPlatformStrategy>()) {}
 };
