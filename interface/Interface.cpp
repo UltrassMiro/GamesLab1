@@ -37,42 +37,6 @@ Interface::~Interface() {
     delete achievementObserver;
 }
 
-void Interface::handleActionMenu() {
-    char choice;
-
-    do {
-        showActionMenu();
-        cin >> choice;
-
-        switch (choice) {
-        case '1':
-            handleInstall();
-            break;
-        case '2':
-            handleRun();
-            break;
-        case '3':
-            handleSave();
-            break;
-        case '4':
-            handleLoad();
-            break;
-        case '5':
-            handleStop();
-            break;
-        case '6':
-            handleStream();
-            break;
-        case '0':
-            break;
-        default:
-            cout << "Invalid choice.\n";
-            break;
-        }
-
-    } while (choice != '0');
-}
-
 void Interface::selectPC() {
     if (pcConfigured) {
         cout << "Windows PC is already configured.\n";
@@ -493,6 +457,42 @@ void Interface::handleGameMenu() {
         default:
             cout << "Invalid choice.\n";
             break;
+        }
+
+    } while (choice != '0');
+}
+
+void Interface::handleActionMenu() {
+    char choice;
+
+    do {
+        showActionMenu();
+        cin >> choice;
+
+        switch (choice) {
+            case '1':
+                handleInstall();
+                break;
+            case '2':
+                handleRun();
+                break;
+            case '3':
+                handleSave();
+                break;
+            case '4':
+                handleLoad();
+                break;
+            case '5':
+                handleStop();
+                break;
+            case '6':
+                handleStream();
+                break;
+            case '0':
+                break;
+            default:
+                cout << "Invalid choice.\n";
+                break;
         }
 
     } while (choice != '0');

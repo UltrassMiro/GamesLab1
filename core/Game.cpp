@@ -3,18 +3,18 @@
 #include "../user/IUser.h"
 
 Game::Game(
-    string n,
-    int c,
-    int r,
-    int g,
-    int s,
+    string name,
+    int cpu,
+    int ram,
+    int gpu,
+    int storage,
     unique_ptr<IPlatformCompatibilityStrategy> strategy
 )
-    : name(n),
-      cpu(c),
-      ram(r),
-      gpu(g),
-      storage(s),
+    : name(name),
+      cpu(cpu),
+      ram(ram),
+      gpu(gpu),
+      storage(storage),
       platformStrategy(move(strategy)) {}
 
 void Game::addObserver(IGameObserver* observer) {
@@ -40,14 +40,6 @@ void Game::notifyObservers(
 }
 
 GameStatus Game::install(IDevice& device) {
-    if (installed) {
-        notifyObservers(
-            "Installation failed: game is already installed",
-            GameStatus::ALREADY_INSTALLED
-        );
-
-        return GameStatus::ALREADY_INSTALLED;
-    }
 
     if (!device.hasEnoughStorage(storage)) {
         notifyObservers(
@@ -58,6 +50,14 @@ GameStatus Game::install(IDevice& device) {
         return GameStatus::WEAK_HARDWARE;
     }
 
+    if (installed) {
+        notifyObservers(
+            "Installation failed: game is already installed",
+            GameStatus::ALREADY_INSTALLED
+        );
+
+        return GameStatus::ALREADY_INSTALLED;
+    }
     device.useStorage(storage);
     installed = true;
 
