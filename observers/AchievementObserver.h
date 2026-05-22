@@ -17,6 +17,12 @@ public:
     void onGameEvent(const GameEventArgs& args) override {
         string gameName = args.getGameName();
 
+        cout << "[EVENT] "
+             << gameName
+             << ": "
+             << args.getMessage()
+             << endl;
+
         if (
             args.getStatus() == GameStatus::OK &&
             args.getMessage() == "Game started successfully"

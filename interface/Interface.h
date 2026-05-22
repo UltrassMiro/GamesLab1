@@ -1,11 +1,14 @@
 #pragma once
+#include "../core/GameStatus.h"
+#include <string>
+
+using namespace std;
 
 class User;
 class Device;
 class Game;
-class ConsoleGameObserver;
-class ConsoleGameObserver;
 class AchievementObserver;
+
 
 class Interface {
 private:
@@ -57,7 +60,12 @@ private:
     int mobileGpu = 0;
     int mobileStorage = 0;
 
+    void notifySystem(
+        const string& message,
+        GameStatus status
+    );
 public:
+
     Interface();
     ~Interface();
     void run();

@@ -7,6 +7,7 @@
 #include "../manager/GameManager.h"
 #include "../user/User.h"
 #include "../observers/AchievementObserver.h"
+#include "../observers/GameEventArgs.h"
 #include <iostream>
 
 using namespace std;
@@ -187,113 +188,70 @@ void Interface::selectStrategy() {
 }
 
 void Interface::handleInstall() {
-    if (!checkUser() || !checkDevice() || !checkGame())
+    if (!checkUser() || !checkDevice() || !checkGame()) {
         return;
-
-    GameStatus result = manager->installGame(*game, *device);
-
-    switch (result) {
-    case GameStatus::OK:
-        cout << "Game installed successfully.\n";
-        break;
-    case GameStatus::ALREADY_INSTALLED:
-        cout << "Error: Game is already installed.\n";
-        break;
-    case GameStatus::WEAK_HARDWARE:
-        cout << "Error: Not enough free HDD space.\n";
-        break;
-    default:
-        cout << "Error: Game installation failed.\n";
-        break;
     }
+
+    manager->installGame(*game, *device);
 }
 
 void Interface::handleRun() {
-    if (!checkUser() || !checkDevice() || !checkGame())
+    if (!checkUser() || !checkDevice() || !checkGame()) {
         return;
-
-    GameStatus result = manager->start(*game, *user, *device);
-
-    switch (result) {
-    case GameStatus::OK:
-        cout << "Game started successfully.\n";
-        break;
-    case GameStatus::NOT_INSTALLED:
-        cout << "Error: Game is not installed.\n";
-        break;
-    case GameStatus::NOT_LOGGED:
-        cout << "Error: User is not logged in.\n";
-        break;
-    case GameStatus::WEAK_HARDWARE:
-        cout << "Error: Hardware does not meet game requirements.\n";
-        break;
-    case GameStatus::WRONG_PLATFORM:
-        cout << "Error: This game cannot run on selected platform.\n";
-        break;
-    default:
-        cout << "Error: Another game is already running.\n";
-        break;
     }
+
+    manager->start(*game, *user, *device);
 }
 
 void Interface::handleSave() {
-    if (!checkGame())
+    if (!checkGame()) {
         return;
+    }
 
-    GameStatus result = game->save();
-
-    if (result == GameStatus::OK)
-        cout << "Game state saved successfully.\n";
-    else if (result == GameStatus::NOT_RUNNING)
-        cout << "Error: Game is not running.\n";
-    else
-        cout << "Error: Save failed.\n";
+    game->save();
 }
 
 void Interface::handleLoad() {
-    if (!checkGame())
+    if (!checkGame()) {
         return;
+    }
 
-    GameStatus result = game->load();
-
-    if (result == GameStatus::OK)
-        cout << "Saved game loaded successfully.\n";
-    else if (result == GameStatus::NO_SAVES)
-        cout << "Error: No saved states found.\n";
-    else if (result == GameStatus::NOT_RUNNING)
-        cout << "Error: Game is not running.\n";
-    else
-        cout << "Error: Load failed.\n";
+    game->load();
 }
 
 void Interface::handleStop() {
-    if (!checkGame())
-        return;
-
-    if (!game->isRunning()) {
-        cout << "Error: Game is not running.\n";
+    if (!checkGame()) {
         return;
     }
 
     game->stop();
     manager->clear();
-
-    cout << "Game stopped successfully.\n";
 }
 
 void Interface::handleStream() {
-    if (!checkDevice())
+    if (!checkDevice()) {
         return;
+    }
 
-    if (device->canStream())
-        cout << "Streaming from mobile device started.\n";
-    else
-        cout << "Error: Streaming is available only from mobile device.\n";
+    if (device->canStream()) {
+        notifySystem(
+            "Streaming from mobile device started",
+            GameStatus::OK
+        );
+    } else {
+        notifySystem(
+            "Streaming is available only from mobile device",
+            GameStatus::WRONG_PLATFORM
+        );
+    }
 }
 
 bool Interface::checkUser() {
     if (user == nullptr) {
-        cout << "Error: User was not created.\n";
+        notifySystem(
+            "User was not created",
+            GameStatus::NOT_LOGGED
+        );
         return false;
     }
 
@@ -302,7 +260,10 @@ bool Interface::checkUser() {
 
 bool Interface::checkDevice() {
     if (device == nullptr) {
-        cout << "Error: Device is not selected.\n";
+        notifySystem(
+            "Device is not selected",
+            GameStatus::WEAK_HARDWARE
+        );
         return false;
     }
 
@@ -311,7 +272,10 @@ bool Interface::checkDevice() {
 
 bool Interface::checkGame() {
     if (game == nullptr) {
-        cout << "Error: Game is not selected.\n";
+        notifySystem(
+            "Game is not selected",
+            GameStatus::NOT_INSTALLED
+        );
         return false;
     }
 
@@ -355,6 +319,18 @@ bool Interface::checkStrategyPlatform() {
     }
 
     return true;
+}
+void Interface::notifySystem(
+    const string& message,
+    GameStatus status
+) {
+    GameEventArgs args(
+        "System",
+        message,
+        status
+    );
+
+    achievementObserver->onGameEvent(args);
 }
 void Interface::run() {
     char choice;
